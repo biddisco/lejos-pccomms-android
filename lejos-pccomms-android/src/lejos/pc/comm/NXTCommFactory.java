@@ -35,11 +35,15 @@ public class NXTCommFactory {
 	 */
 	public static NXTComm createNXTComm(int protocol) throws NXTCommException {
 		boolean fantom = false;
+		boolean android = false;
 		Properties props = getNXJProperties();
 
 		if ((os.length() >= 7 && os.substring(0, 7).equals("Windows"))||(os.toLowerCase().startsWith("mac os x"))) {
 			fantom = true;
 		}
+    if ((os.length() >= 5 && os.substring(0, 5).equals("Linux"))) {
+      android = true;
+    }
 
 		// Look for USB comms driver first
 		if ((protocol & NXTCommFactory.USB) != 0) {
@@ -56,7 +60,10 @@ public class NXTCommFactory {
 
 		// Look for a Bluetooth one
 		String defaultDriver = "lejos.pc.comm.NXTCommBluecove";
-
+		if (android) {
+		  defaultDriver = "lejos.pc.comm.NXTCommAndroid";
+		}
+		
 		if ((protocol & NXTCommFactory.BLUETOOTH) != 0) {
 			String nxtCommName = props.getProperty("NXTCommBluetooth",
 					defaultDriver);
